@@ -4,7 +4,10 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
+import org.json.CDL;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -15,9 +18,14 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
@@ -81,6 +89,220 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         }
     }
 
+    public void getAllMovies() throws InterruptedException, IOException, TransformerException {
+        List<WebElement> allMovies = driver.findElements(By.xpath("//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemContent']"));
+        List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))]"));
+        WebElement currentDateAnchorElement = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]"));
+        String movieDate = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]//span[1]")).getAttribute("innerHTML");
+        String movieName = null;
+        String movieInfoAndShowtimes = null;
+        WebElement imageURL = null;
+        String imageXpath = null;
+        String movieImagePath = null;
+
+        // root elements
+//        Document xmlDoc = xmlDocBuilder.newDocument();
+//        Element xmlRootElement = xmlDoc.createElement("Movies");
+        xmlDoc.appendChild(xmlRootElement);
+
+        // Movie Date element
+        Element movieDateElement = xmlDoc.createElement("Date");
+        xmlRootElement.appendChild(movieDateElement);
+//        movieDateElement.setAttribute("innerHTML", movieDate);
+        movieDateElement.setTextContent(movieDate);
+
+        for (WebElement movieElement : allMovies)
+        {
+
+            movieName = movieElement.findElement(By.tagName("a")).getAttribute("innerHTML");
+            movieInfoAndShowtimes = movieElement.getText();
+            fileAndConsoleOutput(theaters_bw, "--------------------");
+            fileAndConsoleOutput(theaters_bw, movieDate);
+            fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+//            System.out.println(movieElement.getAttribute("id"));
+//            System.out.println(movieName);
+            //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
+            imageXpath = "//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemImageContain']//img";
+//            imageURL = movieElement.findElement(By.xpath(".//img"));
+//            imageURL = movieElement.findElement(By.xpath("//img[@class='img-responsive lazyloaded' and contains(@alt,'Poster')]"));
+            if (movieName.contains("'"))
+            {
+                continue;
+            }
+            imageURL = movieElement.findElement(By.xpath(imageXpath));
+            movieImagePath = imageURL.getAttribute("src");
+            fileAndConsoleOutput(theaters_bw, movieImagePath);
+
+            // Movie Name element
+            Element movieNameElement = xmlDoc.createElement("Name");
+            movieDateElement.appendChild(movieNameElement);
+//            movieNameElement.setAttribute("innerHTML", movieName);
+            movieNameElement.setTextContent(movieName);
+
+            // Movie Info and Showtimes Element
+            Element movieInfoAndShowtimesElement = xmlDoc.createElement("InfoAndShowtimes");
+            movieNameElement.appendChild(movieInfoAndShowtimesElement);
+//            movieInfoAndShowtimesElement.setAttribute("innerHTML", movieInfoAndShowtimes);
+            movieInfoAndShowtimesElement.setTextContent(movieInfoAndShowtimes);
+
+            // Image Path Element
+            Element imagePathElement = xmlDoc.createElement("ImagePath");
+            movieNameElement.appendChild(imagePathElement);
+//            imagePathElement.setAttribute("innerHTML", movieImagePath);
+            imagePathElement.setTextContent(movieImagePath);
+
+//            Thread.sleep(5000);
+        }
+
+//        // write the content into xml file
+//        TransformerFactory movieTransformerFactory = TransformerFactory.newInstance();
+//        Transformer movieTransformer = movieTransformerFactory.newTransformer();
+//        DOMSource movieSource = new DOMSource(xmlDoc);
+////        StreamResult result = new StreamResult(new File("C:\\test\\file.xml"));
+//        StringWriter movieWriter = new StringWriter();
+//        StreamResult movieResult = new StreamResult(movieWriter);
+//
+//        // Output to console for testing
+//        // StreamResult result = new StreamResult(System.out);
+//
+//        movieTransformer.transform(movieSource, movieResult);
+//        String strResult = movieWriter.toString();
+//
+//        xml_movies_bw.write(strResult);
+
+    }
+
+    public void getNextThreeDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
+        List<WebElement> movies = null;
+        List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))]"));
+        WebElement currentDateAnchorElement = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]"));
+        WebElement moviesImageURL = null;
+        String movieDate = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]//span[1]")).getAttribute("innerHTML");
+        String movieName = null;
+        String movieInfoAndShowtimes = null;
+        WebElement imageURL = null;
+        String dateXpath = null;
+        String imageXpath = null;
+        String movieImagePath = null;
+
+        // root elements
+//        Document xmlDoc = xmlDocBuilder.newDocument();
+//        Element xmlRootElement = xmlDoc.createElement("Movies");
+//        xmlDoc.appendChild(xmlRootElement);
+
+        for (int index = 1; index < 4; index++)
+        {
+            dayButtons.get(index).click();
+            Thread.sleep(5000);
+            dateXpath = "//div[@class='dateList']//label[not(contains(@class,'disabled'))][" + index + "]//span[1]";
+            currentDateAnchorElement = driver.findElement(By.xpath(dateXpath));
+            movieDate = currentDateAnchorElement.getAttribute("innerHTML");
+            movies = driver.findElements(By.xpath("//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemContent']"));
+
+            // Movie Date element
+            Element movieDateElement = xmlDoc.createElement("Date");
+            xmlRootElement.appendChild(movieDateElement);
+//            movieDateElement.setAttribute("innerHTML", movieDate);
+            movieDateElement.setTextContent(movieDate);
+
+
+            for (WebElement movieElement : movies)
+            {
+                movieName = movieElement.findElement(By.tagName("a")).getAttribute("innerHTML");
+                movieInfoAndShowtimes = movieElement.getText();
+                fileAndConsoleOutput(theaters_bw, "--------------------");
+                fileAndConsoleOutput(theaters_bw, movieDate);
+                fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+//            System.out.println(movieElement.getAttribute("id"));
+//            System.out.println(movieName);
+                //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
+                imageXpath = "//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemImageContain']//img";
+//            imageURL = movieElement.findElement(By.xpath(".//img"));
+//            imageURL = movieElement.findElement(By.xpath("//img[@class='img-responsive lazyloaded' and contains(@alt,'Poster')]"));
+                if (movieName.contains("'"))
+                {
+                    continue;
+                }
+                imageURL = movieElement.findElement(By.xpath(imageXpath));
+                movieImagePath = imageURL.getAttribute("src");
+                fileAndConsoleOutput(theaters_bw, movieImagePath);
+
+                // Movie Name element
+                Element movieNameElement = xmlDoc.createElement("Name");
+                movieDateElement.appendChild(movieNameElement);
+//                movieNameElement.setAttribute("innerHTML", movieName);
+                movieNameElement.setTextContent(movieName);
+
+                // Movie Info and Showtimes Element
+                Element movieInfoAndShowtimesElement = xmlDoc.createElement("InfoAndShowtimes");
+                movieNameElement.appendChild(movieInfoAndShowtimesElement);
+//                movieInfoAndShowtimesElement.setAttribute("innerHTML", movieInfoAndShowtimes);
+                movieInfoAndShowtimesElement.setTextContent(movieInfoAndShowtimes);
+
+                // Image Path Element
+                Element imagePathElement = xmlDoc.createElement("ImagePath");
+                movieNameElement.appendChild(imagePathElement);
+//                imagePathElement.setAttribute("innerHTML", movieImagePath);
+                imagePathElement.setTextContent(movieImagePath);
+
+            }
+        }
+
+        // write the content into xml file
+        TransformerFactory movieTransformerFactory = TransformerFactory.newInstance();
+        Transformer movieTransformer = movieTransformerFactory.newTransformer();
+        DOMSource movieSource = new DOMSource(xmlDoc);
+//        StreamResult result = new StreamResult(new File("C:\\test\\file.xml"));
+        StringWriter movieWriter = new StringWriter();
+        StreamResult movieResult = new StreamResult(movieWriter);
+
+        // Output to console for testing
+        // StreamResult result = new StreamResult(System.out);
+
+        movieTransformer.transform(movieSource, movieResult);
+        String strResult = movieWriter.toString();
+
+        xml_movies_bw.write(strResult);
+
+        // JSON output solution begins here
+        int PRETTY_PRINT_INDENT_FACTOR = 4;
+        String TEST_XML_STRING = strResult;
+        //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
+        //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
+        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
+        JSONArray xmlJSONArray = xmlJSONObj.names();
+        int xmlJSONArrayLength = xmlJSONArray.length();
+        String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+        try {
+//            BufferedWriter json_bw = createJSONOutputFile();
+            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+        } catch (Exception je) {
+            fileAndConsoleOutput(json_theaters_bw, je.toString());
+        }
+
+        JSONObject output;
+        try
+        {
+            output = new JSONObject(xmlJSONObj);
+            JSONArray docs = output.getJSONArray("Movies");
+//            File csvFile = new File("C:/test/Movies_Output.csv");
+            String csv = CDL.toString(docs);
+            csv_movies_bw.write(csv);
+            csv_movies_bw.close();
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
     @Test
     public void WebpageTest() throws IOException, BiffException, WriteException, InterruptedException, TransformerException, JSONException {
         // Start Firefox
@@ -115,8 +337,8 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 
         List<WebElement> theaterResults = carmikeSearch(homepageSearchTextBox, ("84009"), homepageSearchButton);
         theaterSelect(theaterResults, "WYNNSONG 12");
-//        getAllMovies();
-//        getNextSevenDaysMovies();
+        getAllMovies();
+        getNextThreeDaysMovies();
 
         // Find the submit button for the Search dialog at the top of the screen
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));

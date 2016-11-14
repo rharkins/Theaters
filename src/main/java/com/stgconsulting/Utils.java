@@ -35,9 +35,9 @@ public class Utils extends SeleniumWebdriverBaseClass {
         Utils myUtils = new Utils();
         CarmikePage myCarmikeTest = new CarmikePage();
         myCarmikeTest.WebpageTest();
-        CinemarkPage mySeleniumTest = new CinemarkPage();
-        mySeleniumTest.createXMLFile();
-        mySeleniumTest.WebpageTest();
+//        CinemarkPage mySeleniumTest = new CinemarkPage();
+//        mySeleniumTest.createXMLFile();
+//        mySeleniumTest.WebpageTest();
 //        theaters_bw.close();
 
     }
