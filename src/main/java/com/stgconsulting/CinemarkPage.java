@@ -6,6 +6,8 @@ import jxl.Workbook;
 import jxl.read.biff.BiffException;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -14,26 +16,46 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.json.CDL;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Richard Harkins on 7/19/2016.
  */
 public class CinemarkPage extends SeleniumWebdriverBaseClass {
+    DocumentBuilderFactory xmlDocFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
+    Document xmlDoc = xmlDocBuilder.newDocument();
+    Element xmlRootElement = xmlDoc.createElement("Movies");
+
     //WebDriver driver = new FirefoxDriver();
     //driver.navigate().to("http://www.google.com");
 
 //    private WebDriver driver;
 //    public BufferedWriter webdriver_theaters_bw = TheatersOutput();
 
-    public CinemarkPage() throws IOException, BiffException {
+    public CinemarkPage() throws IOException, BiffException, ParserConfigurationException {
     }
 
     //    @BeforeMethod
@@ -70,8 +92,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 //    }
 
     @Test(enabled = false)
-    private List<WebElement> cinemarkSearchOld(Boolean titleSearchDropdown, WebElement searchControl, String searchString) throws InterruptedException {
-        System.out.println("In cinemarkSearch");
+    private List<WebElement> cinemarkSearchOld(Boolean titleSearchDropdown, WebElement searchControl, String searchString) throws InterruptedException, IOException {
+        fileAndConsoleOutput(theaters_bw, "In cinemarkSearch");
         // Find the Search dialog at the top of the screen
         if (titleSearchDropdown == true) {
             // Perform code to select an item from the title dropdown using searchString
@@ -89,8 +111,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
                 String text = links.getText();
 
                 //System.out.println(window.document.title)
-                System.out.println(text);
-                System.out.println("--------------------");
+                fileAndConsoleOutput(theaters_bw, text);
+                fileAndConsoleOutput(theaters_bw, "--------------------");
 //                System.out.println(url);
             }
             Assert.assertEquals(searchString, searchString);
@@ -100,9 +122,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
     }
 
     @Test(enabled = false)
-    private List<WebElement> cinemarkSearch(WebElement searchTextBoxControl, String searchString, WebElement searchButton) throws InterruptedException
-    {
-        System.out.println("In cinemarkSearch");
+    private List<WebElement> cinemarkSearch(WebElement searchTextBoxControl, String searchString, WebElement searchButton) throws InterruptedException, IOException {
+        fileAndConsoleOutput(theaters_bw, "In cinemarkSearch");
        // Perform code to search in the search dialog text box using searchString
         searchTextBoxControl.sendKeys(searchString);
         searchButton.click();
@@ -119,8 +140,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             String addressText = theatersAddresses.get(addressIndex).getText();
             String text = links.getText() + "\n" + addressText;
             //System.out.println(window.document.title)
-            System.out.println(text);
-            System.out.println("--------------------");
+            fileAndConsoleOutput(theaters_bw, text);
+            fileAndConsoleOutput(theaters_bw, "--------------------");
             addressIndex++;
 //                System.out.println(url);
         }
@@ -128,16 +149,15 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         return theatersLinks;
     }
 
-    public void theaterSelect(List<WebElement> theaterList, String theater)
-    {
+    public void theaterSelect(List<WebElement> theaterList, String theater) throws IOException {
         Boolean theaterFound = false;
         for (WebElement theaterListElement : theaterList)
         {
-            System.out.println(theaterListElement.getText());
+            fileAndConsoleOutput(theaters_bw, theaterListElement.getText());
             if (theaterListElement.getText().equals(theater))
             {
                 theaterFound = true;
-                System.out.println("Found it");
+                fileAndConsoleOutput(theaters_bw, "Found it");
 //                System.out.println(theaterListElement.getText());
 //                System.out.println(theater);
                 theaterListElement.click();
@@ -145,25 +165,40 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             }
         }
         if (theaterFound == false) {
-            System.out.println("Theater " + theater + " not found");
+            fileAndConsoleOutput(theaters_bw, "Theater " + theater + " not found");
         }
     }
 
-    public void getAllMovies() throws InterruptedException {
+    public void getAllMovies() throws InterruptedException, IOException, TransformerException {
         List<WebElement> allMovies = driver.findElements(By.xpath("//div[@class='col-xs-12 col-sm-10']"));
         List<WebElement> dayButtons = driver.findElements(By.xpath("//li[@data-datevalue]"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath(".//li//a[@id=0]/.."));
         String movieDate = currentDateAnchorElement.getAttribute("data-datevalue");
         String movieName = null;
+        String movieInfoAndShowtimes = null;
         WebElement imageURL = null;
         String imageXpath = null;
+        String movieImagePath = null;
+
+        // root elements
+//        Document xmlDoc = xmlDocBuilder.newDocument();
+//        Element xmlRootElement = xmlDoc.createElement("Movies");
+        xmlDoc.appendChild(xmlRootElement);
+
+        // Movie Date element
+        Element movieDateElement = xmlDoc.createElement("Date");
+        xmlRootElement.appendChild(movieDateElement);
+//        movieDateElement.setAttribute("innerHTML", movieDate);
+        movieDateElement.setTextContent(movieDate);
 
         for (WebElement movieElement : allMovies)
         {
+
             movieName = movieElement.findElement(By.tagName("h2")).getAttribute("innerHTML");
-            System.out.println("--------------------");
-            System.out.println(movieDate);
-            System.out.println(movieElement.getText());
+            movieInfoAndShowtimes = movieElement.getText();
+            fileAndConsoleOutput(theaters_bw, "--------------------");
+            fileAndConsoleOutput(theaters_bw, movieDate);
+            fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
 //            System.out.println(movieElement.getAttribute("id"));
 //            System.out.println(movieName);
             //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
@@ -175,21 +210,66 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
                 continue;
             }
             imageURL = movieElement.findElement(By.xpath(imageXpath));
-            System.out.println(imageURL.getAttribute("data-srcset"));
+            movieImagePath = imageURL.getAttribute("data-srcset");
+            fileAndConsoleOutput(theaters_bw, movieImagePath);
+
+            // Movie Name element
+            Element movieNameElement = xmlDoc.createElement("Name");
+            movieDateElement.appendChild(movieNameElement);
+//            movieNameElement.setAttribute("innerHTML", movieName);
+            movieNameElement.setTextContent(movieName);
+
+            // Movie Info and Showtimes Element
+            Element movieInfoAndShowtimesElement = xmlDoc.createElement("InfoAndShowtimes");
+            movieNameElement.appendChild(movieInfoAndShowtimesElement);
+//            movieInfoAndShowtimesElement.setAttribute("innerHTML", movieInfoAndShowtimes);
+            movieInfoAndShowtimesElement.setTextContent(movieInfoAndShowtimes);
+
+            // Image Path Element
+            Element imagePathElement = xmlDoc.createElement("ImagePath");
+            movieNameElement.appendChild(imagePathElement);
+//            imagePathElement.setAttribute("innerHTML", movieImagePath);
+            imagePathElement.setTextContent(movieImagePath);
+
 //            Thread.sleep(5000);
         }
+
+//        // write the content into xml file
+//        TransformerFactory movieTransformerFactory = TransformerFactory.newInstance();
+//        Transformer movieTransformer = movieTransformerFactory.newTransformer();
+//        DOMSource movieSource = new DOMSource(xmlDoc);
+////        StreamResult result = new StreamResult(new File("C:\\test\\file.xml"));
+//        StringWriter movieWriter = new StringWriter();
+//        StreamResult movieResult = new StreamResult(movieWriter);
+//
+//        // Output to console for testing
+//        // StreamResult result = new StreamResult(System.out);
+//
+//        movieTransformer.transform(movieSource, movieResult);
+//        String strResult = movieWriter.toString();
+//
+//        xml_movies_bw.write(strResult);
+
     }
 
-    public void getNextSevenDaysMovies() throws InterruptedException {
+    public void getNextSevenDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
         List<WebElement> movies = null;
         List<WebElement> dayButtons = driver.findElements(By.xpath("//ul[@id='showdatesMore']//li[@role='presentation']"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath(".//li//a[@id=0]/.."));
         WebElement moviesImageURL = null;
         String movieDate = currentDateAnchorElement.getAttribute("data-datevalue");
         String movieName = null;
+        String movieInfoAndShowtimes = null;
         WebElement imageURL = null;
         String dateXpath = null;
         String imageXpath = null;
+        String movieImagePath = null;
+
+        // root elements
+//        Document xmlDoc = xmlDocBuilder.newDocument();
+//        Element xmlRootElement = xmlDoc.createElement("Movies");
+//        xmlDoc.appendChild(xmlRootElement);
+
         for (int index = 1; index < 7; index++)
         {
             dayButtons.get(index).click();
@@ -198,26 +278,207 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             currentDateAnchorElement = driver.findElement(By.xpath(dateXpath));
             movieDate = currentDateAnchorElement.getAttribute("data-datevalue");
             movies = driver.findElements(By.xpath("//div[@class='col-xs-12 col-sm-10']"));
+
+            // Movie Date element
+            Element movieDateElement = xmlDoc.createElement("Date");
+            xmlRootElement.appendChild(movieDateElement);
+//            movieDateElement.setAttribute("innerHTML", movieDate);
+            movieDateElement.setTextContent(movieDate);
+
+
             for (WebElement movieElement : movies)
             {
                 movieName = movieElement.findElement(By.tagName("h2")).getAttribute("innerHTML");
-                System.out.println("--------------------");
-                System.out.println(movieDate);
+                movieInfoAndShowtimes = movieElement.getText();
+                fileAndConsoleOutput(theaters_bw, "--------------------");
+                fileAndConsoleOutput(theaters_bw, movieDate);
 //                System.out.println(movieElement.getAttribute("id"));
-                System.out.println(movieElement.getText());
+                fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
                 imageXpath = "//div[@class='hidden-xs col-sm-2']//img[contains(@alt,'" + movieName + " Poster')]";
                 if (movieName.contains("'"))
                 {
                     continue;
                 }
                 imageURL = movieElement.findElement(By.xpath(imageXpath));
-                System.out.println(imageURL.getAttribute("data-srcset"));
+                movieImagePath = imageURL.getAttribute("data-srcset");
+                fileAndConsoleOutput(theaters_bw, movieImagePath);
+
+                // Movie Name element
+                Element movieNameElement = xmlDoc.createElement("Name");
+                movieDateElement.appendChild(movieNameElement);
+//                movieNameElement.setAttribute("innerHTML", movieName);
+                movieNameElement.setTextContent(movieName);
+
+                // Movie Info and Showtimes Element
+                Element movieInfoAndShowtimesElement = xmlDoc.createElement("InfoAndShowtimes");
+                movieNameElement.appendChild(movieInfoAndShowtimesElement);
+//                movieInfoAndShowtimesElement.setAttribute("innerHTML", movieInfoAndShowtimes);
+                movieInfoAndShowtimesElement.setTextContent(movieInfoAndShowtimes);
+
+                // Image Path Element
+                Element imagePathElement = xmlDoc.createElement("ImagePath");
+                movieNameElement.appendChild(imagePathElement);
+//                imagePathElement.setAttribute("innerHTML", movieImagePath);
+                imagePathElement.setTextContent(movieImagePath);
+
             }
         }
+
+        // write the content into xml file
+        TransformerFactory movieTransformerFactory = TransformerFactory.newInstance();
+        Transformer movieTransformer = movieTransformerFactory.newTransformer();
+        DOMSource movieSource = new DOMSource(xmlDoc);
+//        StreamResult result = new StreamResult(new File("C:\\test\\file.xml"));
+        StringWriter movieWriter = new StringWriter();
+        StreamResult movieResult = new StreamResult(movieWriter);
+
+        // Output to console for testing
+        // StreamResult result = new StreamResult(System.out);
+
+        movieTransformer.transform(movieSource, movieResult);
+        String strResult = movieWriter.toString();
+
+        xml_movies_bw.write(strResult);
+
+        // JSON output solution begins here
+        int PRETTY_PRINT_INDENT_FACTOR = 4;
+        String TEST_XML_STRING = strResult;
+        //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
+        //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
+        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
+        JSONArray xmlJSONArray = xmlJSONObj.names();
+        int xmlJSONArrayLength = xmlJSONArray.length();
+        String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+        try {
+//            BufferedWriter json_bw = createJSONOutputFile();
+            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+        } catch (Exception je) {
+            fileAndConsoleOutput(json_theaters_bw, je.toString());
+        }
+
+        JSONObject output;
+        try
+        {
+            output = new JSONObject(xmlJSONObj);
+            JSONArray docs = output.getJSONArray("Movies");
+//            File csvFile = new File("C:/test/Movies_Output.csv");
+            String csv = CDL.toString(docs);
+            csv_movies_bw.write(csv);
+            csv_movies_bw.close();
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
+    public void createXMLFile() throws ParserConfigurationException, TransformerException, IOException, JSONException {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+        // root elements
+        Document doc = docBuilder.newDocument();
+        Element rootElement = doc.createElement("company");
+        doc.appendChild(rootElement);
+
+        // staff elements
+        Element staff = doc.createElement("Staff");
+        rootElement.appendChild(staff);
+
+        // set attribute to staff element
+        Attr attr = doc.createAttribute("id");
+        attr.setValue("1");
+        staff.setAttributeNode(attr);
+
+        // shorten way
+        // staff.setAttribute("id", "1");
+
+        // firstname elements
+        Element firstname = doc.createElement("firstname");
+        firstname.appendChild(doc.createTextNode("yong"));
+        staff.appendChild(firstname);
+
+        // lastname elements
+        Element lastname = doc.createElement("lastname");
+        lastname.appendChild(doc.createTextNode("mook kim"));
+        staff.appendChild(lastname);
+
+        // nickname elements
+        Element nickname = doc.createElement("nickname");
+        nickname.appendChild(doc.createTextNode("mkyong"));
+        staff.appendChild(nickname);
+
+        // salary elements
+        Element salary = doc.createElement("salary");
+        salary.appendChild(doc.createTextNode("100000"));
+        staff.appendChild(salary);
+
+        // write the content into xml file
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+//        StreamResult result = new StreamResult(new File("C:\\test\\file.xml"));
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+
+        // Output to console for testing
+        // StreamResult result = new StreamResult(System.out);
+
+        transformer.transform(source, result);
+        String strResult = writer.toString();
+
+
+        // JSON output solution begins here
+        int PRETTY_PRINT_INDENT_FACTOR = 4;
+        String TEST_XML_STRING = strResult;
+        //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
+        //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
+        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        try {
+//            BufferedWriter json_bw = createJSONOutputFile();
+            JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
+            String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+        } catch (JSONException je) {
+            fileAndConsoleOutput(json_theaters_bw, je.toString());
+        }
+    }
+    // JSON output solution ends here
+
+//        JsonObject obj = new JsonParser().parse(jsonString).getAsJsonObject();
+//        Gson gsonbject = new Gson();
+//        String xmlToJSON = gsonbject.toJson("<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>yong</firstname><lastname>mook kim</lastname><nickname>mkyong</nickname><salary>100000</salary></Staff></company>");
+
+//        JsonFactory factory = new JsonFactory();
+//
+//        JsonGenerator generator = factory.createGenerator(
+//                new File("C:\\test\\json_test.json"), JsonEncoding.UTF8);
+//
+//        generator.writeStartObject();
+//        generator.writeStringField("brand", "Mercedes");
+//        generator.writeNumberField("doors", 5);
+//        generator.writeEndObject();
+//
+//        generator.close();
+//
+//        XmlMapper xmlMapper = new XmlMapper();
+//        String xml = xmlMapper.readValue("<Simple><x>1</x><y>2</y></Simple>", );
+//
+//        String xmlToJSON = gsonbject.toJson(xml);
+//        System.out.println(xmlToJSON);
+
+    //    }
+
     @Test
-    public void WebpageTest() throws IOException, BiffException, WriteException, InterruptedException {
+    public void WebpageTest() throws IOException, BiffException, WriteException, InterruptedException, TransformerException, JSONException {
         // Start Firefox
 //        startFF();
         // Open the webpage for Cinemark
@@ -257,24 +518,21 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));
 //        searchDialogSubmitButton.click();
 
-        theaters_bw.write("Accessing BufferedWriter object in WebPageTest");
-        theaters_bw.newLine();
-        theaters_bw.write("Accessing BufferedWriter object in WebPageTest - Line 2");
-        theaters_bw.newLine();
-        theaters_bw.write("Accessing BufferedWriter object in WebPageTest - Line 3");
-        theaters_bw.close();
+        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest");
+        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
+        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
 
 //        Workbook myExcelWorkbook = Workbook.getWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook myWritableExcelWorkbook = Workbook.createWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"), myExcelWorkbook);
 //        int numSheets = myExcelWorkbook.getNumberOfSheets();
         File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
         String workBookFilePath = workbookFile.getAbsolutePath();
-        System.out.println(workBookFilePath);
+        fileAndConsoleOutput(theaters_bw, workBookFilePath);
 //        Workbook theatersExcelWorkbook = Workbook.getWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"), theatersExcelWorkbook);
 
         int numSheets = theatersWritableExcelWorkbook.getNumberOfSheets();
-        System.out.println("Number of sheets = " + numSheets);
+        fileAndConsoleOutput(theaters_bw, "Number of sheets = " + numSheets);
 //        Sheet mySheet = myExcelWorkbook.getSheet(0);
         Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
         Cell myCell = mySheet.getCell(0, 0);
@@ -282,7 +540,9 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
-
+        theaters_bw.close();
+        json_theaters_bw.close();
+        xml_movies_bw.close();;
 
     }
 }
