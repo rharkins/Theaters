@@ -48,6 +48,10 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
     DocumentBuilder xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
     Document xmlDoc = xmlDocBuilder.newDocument();
     Element xmlRootElement = xmlDoc.createElement("Movies");
+    private BufferedWriter cinemark_theaters_bw = createAnyOutputFile("C:/test/cinemark_theaters.txt");
+    private BufferedWriter cinemark_json_theaters_bw = createAnyOutputFile("C:/test/cinemark_json_theaters.txt");
+    private BufferedWriter cinemark_xml_movies_bw = createAnyOutputFile("C:/test/cinemark_movies.xml");
+    private BufferedWriter cinemark_csv_movies_bw = createAnyOutputFile("C:/test/cinemark_Movies_Output.csv");
 
     //WebDriver driver = new FirefoxDriver();
     //driver.navigate().to("http://www.google.com");
@@ -93,7 +97,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 
     @Test(enabled = false)
     private List<WebElement> cinemarkSearchOld(Boolean titleSearchDropdown, WebElement searchControl, String searchString) throws InterruptedException, IOException {
-        fileAndConsoleOutput(theaters_bw, "In cinemarkSearch");
+        fileAndConsoleOutput(cinemark_theaters_bw, "In cinemarkSearch");
         // Find the Search dialog at the top of the screen
         if (titleSearchDropdown == true) {
             // Perform code to select an item from the title dropdown using searchString
@@ -111,8 +115,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
                 String text = links.getText();
 
                 //System.out.println(window.document.title)
-                fileAndConsoleOutput(theaters_bw, text);
-                fileAndConsoleOutput(theaters_bw, "--------------------");
+                fileAndConsoleOutput(cinemark_theaters_bw, text);
+                fileAndConsoleOutput(cinemark_theaters_bw, "--------------------");
 //                System.out.println(url);
             }
             Assert.assertEquals(searchString, searchString);
@@ -123,7 +127,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 
     @Test(enabled = false)
     private List<WebElement> cinemarkSearch(WebElement searchTextBoxControl, String searchString, WebElement searchButton) throws InterruptedException, IOException {
-        fileAndConsoleOutput(theaters_bw, "In cinemarkSearch");
+        fileAndConsoleOutput(cinemark_theaters_bw, "In cinemarkSearch");
        // Perform code to search in the search dialog text box using searchString
         searchTextBoxControl.sendKeys(searchString);
         searchButton.click();
@@ -140,8 +144,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             String addressText = theatersAddresses.get(addressIndex).getText();
             String text = links.getText() + "\n" + addressText;
             //System.out.println(window.document.title)
-            fileAndConsoleOutput(theaters_bw, text);
-            fileAndConsoleOutput(theaters_bw, "--------------------");
+            fileAndConsoleOutput(cinemark_theaters_bw, text);
+            fileAndConsoleOutput(cinemark_theaters_bw, "--------------------");
             addressIndex++;
 //                System.out.println(url);
         }
@@ -153,11 +157,11 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         Boolean theaterFound = false;
         for (WebElement theaterListElement : theaterList)
         {
-            fileAndConsoleOutput(theaters_bw, theaterListElement.getText());
+            fileAndConsoleOutput(cinemark_theaters_bw, theaterListElement.getText());
             if (theaterListElement.getText().equals(theater))
             {
                 theaterFound = true;
-                fileAndConsoleOutput(theaters_bw, "Found it");
+                fileAndConsoleOutput(cinemark_theaters_bw, "Found it");
 //                System.out.println(theaterListElement.getText());
 //                System.out.println(theater);
                 theaterListElement.click();
@@ -165,7 +169,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             }
         }
         if (theaterFound == false) {
-            fileAndConsoleOutput(theaters_bw, "Theater " + theater + " not found");
+            fileAndConsoleOutput(cinemark_theaters_bw, "Theater " + theater + " not found");
         }
     }
 
@@ -196,9 +200,9 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 
             movieName = movieElement.findElement(By.tagName("h2")).getAttribute("innerHTML");
             movieInfoAndShowtimes = movieElement.getText();
-            fileAndConsoleOutput(theaters_bw, "--------------------");
-            fileAndConsoleOutput(theaters_bw, movieDate);
-            fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+            fileAndConsoleOutput(cinemark_theaters_bw, "--------------------");
+            fileAndConsoleOutput(cinemark_theaters_bw, movieDate);
+            fileAndConsoleOutput(cinemark_theaters_bw, movieInfoAndShowtimes);
 //            System.out.println(movieElement.getAttribute("id"));
 //            System.out.println(movieName);
             //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
@@ -211,7 +215,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             }
             imageURL = movieElement.findElement(By.xpath(imageXpath));
             movieImagePath = imageURL.getAttribute("data-srcset");
-            fileAndConsoleOutput(theaters_bw, movieImagePath);
+            fileAndConsoleOutput(cinemark_theaters_bw, movieImagePath);
 
             // Movie Name element
             Element movieNameElement = xmlDoc.createElement("Name");
@@ -290,10 +294,10 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             {
                 movieName = movieElement.findElement(By.tagName("h2")).getAttribute("innerHTML");
                 movieInfoAndShowtimes = movieElement.getText();
-                fileAndConsoleOutput(theaters_bw, "--------------------");
-                fileAndConsoleOutput(theaters_bw, movieDate);
+                fileAndConsoleOutput(cinemark_theaters_bw, "--------------------");
+                fileAndConsoleOutput(cinemark_theaters_bw, movieDate);
 //                System.out.println(movieElement.getAttribute("id"));
-                fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+                fileAndConsoleOutput(cinemark_theaters_bw, movieInfoAndShowtimes);
                 imageXpath = "//div[@class='hidden-xs col-sm-2']//img[contains(@alt,'" + movieName + " Poster')]";
                 if (movieName.contains("'"))
                 {
@@ -301,7 +305,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
                 }
                 imageURL = movieElement.findElement(By.xpath(imageXpath));
                 movieImagePath = imageURL.getAttribute("data-srcset");
-                fileAndConsoleOutput(theaters_bw, movieImagePath);
+                fileAndConsoleOutput(cinemark_theaters_bw, movieImagePath);
 
                 // Movie Name element
                 Element movieNameElement = xmlDoc.createElement("Name");
@@ -338,24 +342,24 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         movieTransformer.transform(movieSource, movieResult);
         String strResult = movieWriter.toString();
 
-        xml_movies_bw.write(strResult);
+        cinemark_xml_movies_bw.write(strResult);
 
         // JSON output solution begins here
         int PRETTY_PRINT_INDENT_FACTOR = 4;
         String TEST_XML_STRING = strResult;
         //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
         //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
-        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        fileAndConsoleOutput(cinemark_json_theaters_bw, "Outside xml try block");
         JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
         JSONArray xmlJSONArray = xmlJSONObj.names();
         int xmlJSONArrayLength = xmlJSONArray.length();
         String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
         try {
 //            BufferedWriter json_bw = createJSONOutputFile();
-            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
-            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+            fileAndConsoleOutput(cinemark_json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(cinemark_json_theaters_bw, jsonPrettyPrintString);
         } catch (Exception je) {
-            fileAndConsoleOutput(json_theaters_bw, je.toString());
+            fileAndConsoleOutput(cinemark_json_theaters_bw, je.toString());
         }
 
         JSONObject output;
@@ -365,8 +369,8 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             JSONArray docs = output.getJSONArray("Movies");
 //            File csvFile = new File("C:/test/Movies_Output.csv");
             String csv = CDL.toString(docs);
-            csv_movies_bw.write(csv);
-            csv_movies_bw.close();
+            cinemark_csv_movies_bw.write(csv);
+            cinemark_csv_movies_bw.close();
         }
         catch (JSONException e)
         {
@@ -440,15 +444,15 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         String TEST_XML_STRING = strResult;
         //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
         //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
-        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        fileAndConsoleOutput(cinemark_json_theaters_bw, "Outside xml try block");
         try {
 //            BufferedWriter json_bw = createJSONOutputFile();
             JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
             String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
-            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
-            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+            fileAndConsoleOutput(cinemark_json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(cinemark_json_theaters_bw, jsonPrettyPrintString);
         } catch (JSONException je) {
-            fileAndConsoleOutput(json_theaters_bw, je.toString());
+            fileAndConsoleOutput(cinemark_json_theaters_bw, je.toString());
         }
     }
     // JSON output solution ends here
@@ -518,21 +522,21 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));
 //        searchDialogSubmitButton.click();
 
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest");
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
+        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
+        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
+        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
 
 //        Workbook myExcelWorkbook = Workbook.getWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook myWritableExcelWorkbook = Workbook.createWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"), myExcelWorkbook);
 //        int numSheets = myExcelWorkbook.getNumberOfSheets();
         File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
         String workBookFilePath = workbookFile.getAbsolutePath();
-        fileAndConsoleOutput(theaters_bw, workBookFilePath);
+        fileAndConsoleOutput(cinemark_theaters_bw, workBookFilePath);
 //        Workbook theatersExcelWorkbook = Workbook.getWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"), theatersExcelWorkbook);
 
         int numSheets = theatersWritableExcelWorkbook.getNumberOfSheets();
-        fileAndConsoleOutput(theaters_bw, "Number of sheets = " + numSheets);
+        fileAndConsoleOutput(cinemark_theaters_bw, "Number of sheets = " + numSheets);
 //        Sheet mySheet = myExcelWorkbook.getSheet(0);
         Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
         Cell myCell = mySheet.getCell(0, 0);
@@ -540,9 +544,10 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
-        theaters_bw.close();
-        json_theaters_bw.close();
-        xml_movies_bw.close();;
+        cinemark_theaters_bw.close();
+        cinemark_json_theaters_bw.close();
+        cinemark_xml_movies_bw.close();
+        cinemark_csv_movies_bw.close();
 
     }
 }

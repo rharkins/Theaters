@@ -24,10 +24,10 @@ public class SeleniumWebdriverBaseClass {
     static String baseWebPageURL = "http://www.cinemark.com";
     public static boolean browserStarted = false;
     //    public static HashMap<String, String> resortList = new HashMap<String, String>();
-    public BufferedWriter theaters_bw = createOutputFile();
-    public BufferedWriter json_theaters_bw = createJSONOutputFile();
-    public BufferedWriter xml_movies_bw = createXMLMoviesOutputFile();
-    public BufferedWriter csv_movies_bw = createCSVMoviesOutputFile();
+//    public BufferedWriter theaters_bw = createOutputFile();
+//    public BufferedWriter json_theaters_bw = createJSONOutputFile();
+//    public BufferedWriter xml_movies_bw = createXMLMoviesOutputFile();
+//    public BufferedWriter csv_movies_bw = createCSVMoviesOutputFile();
     File workbookFileInput = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
     File workbookFileOutput = new File("C:\\test\\Theaters_Output.xls");
 //    File workbookFileInput = new File("C://test//ROLL 2016 - Contact Information and Initial Deposit.xls");
@@ -134,11 +134,27 @@ public class SeleniumWebdriverBaseClass {
         return bw;
     }
 
+    public BufferedWriter createAnyOutputFile(String outputFilePath) throws IOException {
+        File outputFile = new File(outputFilePath);
+        // If file doesnt exists, then create it
+        if (!outputFile.exists()) {
+            outputFile.createNewFile();
+        }
+        FileWriter fw = new FileWriter(outputFile.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+        return bw;
+    }
+
     public void fileAndConsoleOutput(BufferedWriter bufferedWriter, String outputString) throws IOException
     {
         bufferedWriter.write(outputString);
         bufferedWriter.newLine();
         System.out.println(outputString);
+    }
+
+    public void cleanup() throws IOException
+    {
+
     }
 
     @AfterMethod

@@ -23,6 +23,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,13 +38,17 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
     DocumentBuilder xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
     Document xmlDoc = xmlDocBuilder.newDocument();
     Element xmlRootElement = xmlDoc.createElement("Movies");
+    private BufferedWriter carmike_theaters_bw = createAnyOutputFile("C:/test/carmike_theaters.txt");
+    private BufferedWriter carmike_json_theaters_bw = createAnyOutputFile("C:/test/carmike_json_theaters.txt");
+    private BufferedWriter carmike_xml_movies_bw = createAnyOutputFile("C:/test/carmike_movies.xml");
+    private BufferedWriter carmike_csv_movies_bw = createAnyOutputFile("C:/test/carmike_Movies_Output.csv");
 
     public CarmikePage() throws IOException, BiffException, ParserConfigurationException {
     }
 
     @Test(enabled = false)
     private List<WebElement> carmikeSearch(WebElement searchTextBoxControl, String searchString, WebElement searchButton) throws InterruptedException, IOException {
-        fileAndConsoleOutput(theaters_bw, "In carmikeSearch");
+        fileAndConsoleOutput(carmike_theaters_bw, "In carmikeSearch");
         // Perform code to search in the search dialog text box using searchString
         searchTextBoxControl.sendKeys(searchString);
         searchButton.click();
@@ -59,8 +64,8 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             String addressText = theatersAddresses.get(addressIndex).getText();
             String text = links.getText() + "\n" + addressText;
             //System.out.println(window.document.title)
-            fileAndConsoleOutput(theaters_bw, text);
-            fileAndConsoleOutput(theaters_bw, "--------------------");
+            fileAndConsoleOutput(carmike_theaters_bw, text);
+            fileAndConsoleOutput(carmike_theaters_bw, "--------------------");
             addressIndex++;
 //                System.out.println(url);
         }
@@ -72,12 +77,12 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         Boolean theaterFound = false;
         for (WebElement theaterListElement : theaterList)
         {
-            fileAndConsoleOutput(theaters_bw, theaterListElement.getText());
+            fileAndConsoleOutput(carmike_theaters_bw, theaterListElement.getText());
             String theaterListElementText = theaterListElement.getText();
             if (theaterListElementText.contains(theater))
             {
                 theaterFound = true;
-                fileAndConsoleOutput(theaters_bw, "Found it");
+                fileAndConsoleOutput(carmike_theaters_bw, "Found it");
 //                System.out.println(theaterListElement.getText());
 //                System.out.println(theater);
                 theaterListElement.click();
@@ -85,7 +90,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             }
         }
         if (theaterFound == false) {
-            fileAndConsoleOutput(theaters_bw, "Theater " + theater + " not found");
+            fileAndConsoleOutput(carmike_theaters_bw, "Theater " + theater + " not found");
         }
     }
 
@@ -116,9 +121,9 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 
             movieName = movieElement.findElement(By.tagName("a")).getAttribute("innerHTML");
             movieInfoAndShowtimes = movieElement.getText();
-            fileAndConsoleOutput(theaters_bw, "--------------------");
-            fileAndConsoleOutput(theaters_bw, movieDate);
-            fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+            fileAndConsoleOutput(carmike_theaters_bw, "--------------------");
+            fileAndConsoleOutput(carmike_theaters_bw, movieDate);
+            fileAndConsoleOutput(carmike_theaters_bw, movieInfoAndShowtimes);
 //            System.out.println(movieElement.getAttribute("id"));
 //            System.out.println(movieName);
             //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
@@ -131,7 +136,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             }
             imageURL = movieElement.findElement(By.xpath(imageXpath));
             movieImagePath = imageURL.getAttribute("src");
-            fileAndConsoleOutput(theaters_bw, movieImagePath);
+            fileAndConsoleOutput(carmike_theaters_bw, movieImagePath);
 
             // Movie Name element
             Element movieNameElement = xmlDoc.createElement("Name");
@@ -172,7 +177,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 
     }
 
-    public void getNextThreeDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
+    public void getAllAvailableDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
         List<WebElement> movies = null;
         List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))]"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]"));
@@ -190,11 +195,12 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 //        Element xmlRootElement = xmlDoc.createElement("Movies");
 //        xmlDoc.appendChild(xmlRootElement);
 
-        for (int index = 1; index < 4; index++)
-        {
+        for (int index = 1; index < 5; index++) {
+            if (dayButtons.get(index).isEnabled())
+            {
             dayButtons.get(index).click();
             Thread.sleep(5000);
-            dateXpath = "//div[@class='dateList']//label[not(contains(@class,'disabled'))][" + index + "]//span[1]";
+            dateXpath = "//div[@class='dateList']//label[not(contains(@class,'disabled'))][" + (index + 1) + "]//span[1]";
             currentDateAnchorElement = driver.findElement(By.xpath(dateXpath));
             movieDate = currentDateAnchorElement.getAttribute("innerHTML");
             movies = driver.findElements(By.xpath("//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemContent']"));
@@ -206,26 +212,24 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             movieDateElement.setTextContent(movieDate);
 
 
-            for (WebElement movieElement : movies)
-            {
+            for (WebElement movieElement : movies) {
                 movieName = movieElement.findElement(By.tagName("a")).getAttribute("innerHTML");
                 movieInfoAndShowtimes = movieElement.getText();
-                fileAndConsoleOutput(theaters_bw, "--------------------");
-                fileAndConsoleOutput(theaters_bw, movieDate);
-                fileAndConsoleOutput(theaters_bw, movieInfoAndShowtimes);
+                fileAndConsoleOutput(carmike_theaters_bw, "--------------------");
+                fileAndConsoleOutput(carmike_theaters_bw, movieDate);
+                fileAndConsoleOutput(carmike_theaters_bw, movieInfoAndShowtimes);
 //            System.out.println(movieElement.getAttribute("id"));
 //            System.out.println(movieName);
                 //div[@class='hidden-xs col-sm-2']//img[contains(@alt,'Inferno Poster')]
                 imageXpath = "//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemImageContain']//img";
 //            imageURL = movieElement.findElement(By.xpath(".//img"));
 //            imageURL = movieElement.findElement(By.xpath("//img[@class='img-responsive lazyloaded' and contains(@alt,'Poster')]"));
-                if (movieName.contains("'"))
-                {
+                if (movieName.contains("'")) {
                     continue;
                 }
                 imageURL = movieElement.findElement(By.xpath(imageXpath));
                 movieImagePath = imageURL.getAttribute("src");
-                fileAndConsoleOutput(theaters_bw, movieImagePath);
+                fileAndConsoleOutput(carmike_theaters_bw, movieImagePath);
 
                 // Movie Name element
                 Element movieNameElement = xmlDoc.createElement("Name");
@@ -247,6 +251,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 
             }
         }
+        }
 
         // write the content into xml file
         TransformerFactory movieTransformerFactory = TransformerFactory.newInstance();
@@ -262,24 +267,24 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         movieTransformer.transform(movieSource, movieResult);
         String strResult = movieWriter.toString();
 
-        xml_movies_bw.write(strResult);
+        carmike_xml_movies_bw.write(strResult);
 
         // JSON output solution begins here
         int PRETTY_PRINT_INDENT_FACTOR = 4;
         String TEST_XML_STRING = strResult;
         //"<?xml version=\"1.0\" ?><test attrib=\"moretest\">Turn this to JSON</test>";
         //"<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><Staff id=\"1\"><firstname>Richard</firstname><lastname>Harkins </lastname><nickname>Rich</nickname><firstname>Kim</firstname><lastname>Harkins </lastname><nickname>Kimberly</nickname><firstname>Mitchell</firstname><lastname>Harkins</lastname><nickname>Mitch</nickname></Staff></company>";
-        fileAndConsoleOutput(json_theaters_bw, "Outside xml try block");
+        fileAndConsoleOutput(carmike_json_theaters_bw, "Outside xml try block");
         JSONObject xmlJSONObj = org.json.XML.toJSONObject(TEST_XML_STRING);
         JSONArray xmlJSONArray = xmlJSONObj.names();
         int xmlJSONArrayLength = xmlJSONArray.length();
         String jsonPrettyPrintString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
         try {
 //            BufferedWriter json_bw = createJSONOutputFile();
-            fileAndConsoleOutput(json_theaters_bw, "Inside xml try block");
-            fileAndConsoleOutput(json_theaters_bw, jsonPrettyPrintString);
+            fileAndConsoleOutput(carmike_json_theaters_bw, "Inside xml try block");
+            fileAndConsoleOutput(carmike_json_theaters_bw, jsonPrettyPrintString);
         } catch (Exception je) {
-            fileAndConsoleOutput(json_theaters_bw, je.toString());
+            fileAndConsoleOutput(carmike_json_theaters_bw, je.toString());
         }
 
         JSONObject output;
@@ -289,8 +294,8 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             JSONArray docs = output.getJSONArray("Movies");
 //            File csvFile = new File("C:/test/Movies_Output.csv");
             String csv = CDL.toString(docs);
-            csv_movies_bw.write(csv);
-            csv_movies_bw.close();
+            carmike_csv_movies_bw.write(csv);
+            carmike_csv_movies_bw.close();
         }
         catch (JSONException e)
         {
@@ -338,27 +343,27 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         List<WebElement> theaterResults = carmikeSearch(homepageSearchTextBox, ("84009"), homepageSearchButton);
         theaterSelect(theaterResults, "WYNNSONG 12");
         getAllMovies();
-        getNextThreeDaysMovies();
+        getAllAvailableDaysMovies();
 
         // Find the submit button for the Search dialog at the top of the screen
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));
 //        searchDialogSubmitButton.click();
 
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest");
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
-        fileAndConsoleOutput(theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
+        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
+        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
+        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
 
 //        Workbook myExcelWorkbook = Workbook.getWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook myWritableExcelWorkbook = Workbook.createWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"), myExcelWorkbook);
 //        int numSheets = myExcelWorkbook.getNumberOfSheets();
         File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
         String workBookFilePath = workbookFile.getAbsolutePath();
-        fileAndConsoleOutput(theaters_bw, workBookFilePath);
+        fileAndConsoleOutput(carmike_theaters_bw, workBookFilePath);
 //        Workbook theatersExcelWorkbook = Workbook.getWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"), theatersExcelWorkbook);
 
         int numSheets = theatersWritableExcelWorkbook.getNumberOfSheets();
-        fileAndConsoleOutput(theaters_bw, "Number of sheets = " + numSheets);
+        fileAndConsoleOutput(carmike_theaters_bw, "Number of sheets = " + numSheets);
 //        Sheet mySheet = myExcelWorkbook.getSheet(0);
         Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
         Cell myCell = mySheet.getCell(0, 0);
@@ -366,9 +371,10 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
-        theaters_bw.close();
-        json_theaters_bw.close();
-        xml_movies_bw.close();;
+        carmike_theaters_bw.close();
+        carmike_json_theaters_bw.close();
+        carmike_xml_movies_bw.close();
+        carmike_csv_movies_bw.close();
 
     }
 }
