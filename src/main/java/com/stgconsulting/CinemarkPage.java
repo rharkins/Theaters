@@ -52,7 +52,11 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
     private BufferedWriter cinemark_json_theaters_bw = createAnyOutputFile("C:/test/cinemark_json_theaters.txt");
     private BufferedWriter cinemark_xml_movies_bw = createAnyOutputFile("C:/test/cinemark_movies.xml");
     private BufferedWriter cinemark_csv_movies_bw = createAnyOutputFile("C:/test/cinemark_Movies_Output.csv");
-
+    private File workbookFileInput = new File("C:\\test\\Cinemark_Theaters_Input.xls");
+    private File workbookFileOutput = new File("C:\\test\\Cinemark_Theaters_Output.xls");
+    private Workbook theatersExcelWorkbook = Workbook.getWorkbook(workbookFileInput);
+    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbook);
+    private boolean appendXMLRootElement = false;
     //WebDriver driver = new FirefoxDriver();
     //driver.navigate().to("http://www.google.com");
 
@@ -187,7 +191,11 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         // root elements
 //        Document xmlDoc = xmlDocBuilder.newDocument();
 //        Element xmlRootElement = xmlDoc.createElement("Movies");
-        xmlDoc.appendChild(xmlRootElement);
+        if(appendXMLRootElement == false)
+        {
+            xmlDoc.appendChild(xmlRootElement);
+            appendXMLRootElement = true;
+        }
 
         // Movie Date element
         Element movieDateElement = xmlDoc.createElement("Date");
@@ -513,25 +521,41 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 ////        WebElement searchTextBox = driver.findElement(By.id("main_inp1"));
 ////        WebElement searchButton = driver.findElement(By.xpath(""))
 
-        List<WebElement> theaterResults = cinemarkSearch(homepageSearchTextBox, ("South Jordan"), homepageSearchButton);
-        theaterSelect(theaterResults, "Cinemark Sugar House");
-        getAllMovies();
-        getNextSevenDaysMovies();
+        Sheet inputSheet = theatersExcelWorkbook.getSheet(0);
+        int numRows = inputSheet.getRows();
+        int rownum = 1;
+        while (rownum < numRows)
+        {
+            driver.navigate().to("http://www.cinemark.com");
+            Cell demographicSearchTextCell = inputSheet.getCell(0, rownum);
+            Cell theaterSearchTextCell = inputSheet.getCell(1, rownum);
+            String demographicSearchTextCellContents = demographicSearchTextCell.getContents();
+            String theaterSearchTextCellContents = theaterSearchTextCell.getContents();
+            homepageSearchTextBox = driver.findElement(By.xpath("//form[@class='navbar-form row2Search']/input"));
+            homepageSearchButton = driver.findElement(By.xpath("//form[@class='navbar-form row2Search']/button"));
+            List<WebElement> theaterResults = cinemarkSearch(homepageSearchTextBox, (demographicSearchTextCellContents), homepageSearchButton);
+            theaterSelect(theaterResults, theaterSearchTextCellContents);
+            getAllMovies();
+            getNextSevenDaysMovies();
+            System.out.println(demographicSearchTextCellContents);
+            System.out.println(theaterSearchTextCellContents);
+            rownum++;
+        }
 
         // Find the submit button for the Search dialog at the top of the screen
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));
 //        searchDialogSubmitButton.click();
 
-        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
-        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
-        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
+//        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
+//        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
+//        fileAndConsoleOutput(cinemark_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
 
 //        Workbook myExcelWorkbook = Workbook.getWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook myWritableExcelWorkbook = Workbook.createWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"), myExcelWorkbook);
 //        int numSheets = myExcelWorkbook.getNumberOfSheets();
-        File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
-        String workBookFilePath = workbookFile.getAbsolutePath();
-        fileAndConsoleOutput(cinemark_theaters_bw, workBookFilePath);
+//        File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
+//        String workBookFilePath = workbookFile.getAbsolutePath();
+//        fileAndConsoleOutput(cinemark_theaters_bw, workBookFilePath);
 //        Workbook theatersExcelWorkbook = Workbook.getWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"), theatersExcelWorkbook);
 
@@ -541,7 +565,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
         Cell myCell = mySheet.getCell(0, 0);
         String myContents = myCell.getContents();
-        System.out.print(myContents);
+//        System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
         cinemark_theaters_bw.close();

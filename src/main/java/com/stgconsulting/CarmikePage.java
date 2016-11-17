@@ -2,7 +2,9 @@ package com.stgconsulting;
 
 import jxl.Cell;
 import jxl.Sheet;
+import jxl.Workbook;
 import jxl.read.biff.BiffException;
+import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -42,6 +44,12 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
     private BufferedWriter carmike_json_theaters_bw = createAnyOutputFile("C:/test/carmike_json_theaters.txt");
     private BufferedWriter carmike_xml_movies_bw = createAnyOutputFile("C:/test/carmike_movies.xml");
     private BufferedWriter carmike_csv_movies_bw = createAnyOutputFile("C:/test/carmike_Movies_Output.csv");
+    private File workbookFileInput = new File("C:\\test\\Carmike_Theaters_Input.xls");
+    private File workbookFileOutput = new File("C:\\test\\Carmike_Theaters_Output.xls");
+    private Workbook theatersExcelWorkbook = Workbook.getWorkbook(workbookFileInput);
+    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbook);
+    private boolean appendXMLRootElement = false;
+    private boolean firstSearch = true;
 
     public CarmikePage() throws IOException, BiffException, ParserConfigurationException {
     }
@@ -49,6 +57,15 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
     @Test(enabled = false)
     private List<WebElement> carmikeSearch(WebElement searchTextBoxControl, String searchString, WebElement searchButton) throws InterruptedException, IOException {
         fileAndConsoleOutput(carmike_theaters_bw, "In carmikeSearch");
+        if (firstSearch == true)
+        {
+            firstSearch = false;
+        }
+        else
+        {
+            driver.findElement(By.xpath("//a[@data-change-theatre]")).click();
+        }
+
         // Perform code to search in the search dialog text box using searchString
         searchTextBoxControl.sendKeys(searchString);
         searchButton.click();
@@ -108,7 +125,11 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         // root elements
 //        Document xmlDoc = xmlDocBuilder.newDocument();
 //        Element xmlRootElement = xmlDoc.createElement("Movies");
-        xmlDoc.appendChild(xmlRootElement);
+        if(appendXMLRootElement == false)
+        {
+            xmlDoc.appendChild(xmlRootElement);
+            appendXMLRootElement = true;
+        }
 
         // Movie Date element
         Element movieDateElement = xmlDoc.createElement("Date");
@@ -120,6 +141,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         {
 
             movieName = movieElement.findElement(By.tagName("a")).getAttribute("innerHTML");
+            movieName = movieName.trim();
             movieInfoAndShowtimes = movieElement.getText();
             fileAndConsoleOutput(carmike_theaters_bw, "--------------------");
             fileAndConsoleOutput(carmike_theaters_bw, movieDate);
@@ -340,25 +362,43 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 ////        WebElement searchTextBox = driver.findElement(By.id("main_inp1"));
 ////        WebElement searchButton = driver.findElement(By.xpath(""))
 
-        List<WebElement> theaterResults = carmikeSearch(homepageSearchTextBox, ("84009"), homepageSearchButton);
-        theaterSelect(theaterResults, "WYNNSONG 12");
-        getAllMovies();
-        getAllAvailableDaysMovies();
+        Sheet inputSheet = theatersExcelWorkbook.getSheet(0);
+        int numRows = inputSheet.getRows();
+        int rownum = 1;
+        while (rownum < numRows)
+        {
+            driver.navigate().to("http://www.carmike.com");
+            Cell demographicSearchTextCell = inputSheet.getCell(0, rownum);
+            Cell theaterSearchTextCell = inputSheet.getCell(1, rownum);
+            String demographicSearchTextCellContents = demographicSearchTextCell.getContents();
+            String theaterSearchTextCellContents = theaterSearchTextCell.getContents();
+            homepageSearchTextBox = driver.findElement(By.xpath("//input[@data-finder-search-input='main']"));
+            homepageSearchButton = driver.findElement(By.xpath("//button[@data-finder-search-btn='main']"));
+            List<WebElement> theaterResults = carmikeSearch(homepageSearchTextBox, (demographicSearchTextCellContents), homepageSearchButton);
+            theaterSelect(theaterResults, theaterSearchTextCellContents);
+            getAllMovies();
+            getAllAvailableDaysMovies();
+            System.out.println(demographicSearchTextCellContents);
+            System.out.println(theaterSearchTextCellContents);
+            rownum++;
+        }
+
+
 
         // Find the submit button for the Search dialog at the top of the screen
 //        WebElement searchDialogSubmitButton = driver.findElement(By.cssSelector("#main_theatres_search>fieldset>input[src]"));
 //        searchDialogSubmitButton.click();
 
-        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
-        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
-        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
+//        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest");
+//        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 2");
+//        fileAndConsoleOutput(carmike_theaters_bw, "Accessing BufferedWriter object in WebPageTest - Line 3");
 
 //        Workbook myExcelWorkbook = Workbook.getWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook myWritableExcelWorkbook = Workbook.createWorkbook(new File("C:/test/ROLL 2016 - Contact Information and Initial Deposit.xls"), myExcelWorkbook);
 //        int numSheets = myExcelWorkbook.getNumberOfSheets();
-        File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
-        String workBookFilePath = workbookFile.getAbsolutePath();
-        fileAndConsoleOutput(carmike_theaters_bw, workBookFilePath);
+//        File workbookFile = new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls");
+//        String workBookFilePath = workbookFile.getAbsolutePath();
+//        fileAndConsoleOutput(carmike_theaters_bw, workBookFilePath);
 //        Workbook theatersExcelWorkbook = Workbook.getWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"));
 //        WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(new File("C:\\test\\ROLL 2016 - Contact Information and Initial Deposit.xls"), theatersExcelWorkbook);
 
@@ -368,7 +408,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
         Cell myCell = mySheet.getCell(0, 0);
         String myContents = myCell.getContents();
-        System.out.print(myContents);
+//        System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
         carmike_theaters_bw.close();
