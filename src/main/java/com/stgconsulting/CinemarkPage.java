@@ -47,7 +47,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
     DocumentBuilderFactory xmlDocFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
     Document xmlDoc = xmlDocBuilder.newDocument();
-    Element xmlRootElement = xmlDoc.createElement("Movies");
+    Element xmlRootElement = xmlDoc.createElement("Data");
     private BufferedWriter cinemark_theaters_bw = createAnyOutputFile("C:/test/cinemark_theaters.txt");
     private BufferedWriter cinemark_json_theaters_bw = createAnyOutputFile("C:/test/cinemark_json_theaters.txt");
     private BufferedWriter cinemark_xml_movies_bw = createAnyOutputFile("C:/test/cinemark_movies.xml");
@@ -190,7 +190,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 
         // root elements
 //        Document xmlDoc = xmlDocBuilder.newDocument();
-//        Element xmlRootElement = xmlDoc.createElement("Movies");
+//        Element xmlRootElement = xmlDoc.createElement("Data");
         if(appendXMLRootElement == false)
         {
             xmlDoc.appendChild(xmlRootElement);
@@ -198,9 +198,13 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         }
 
         // Movie Date element
+        Element theaterElement = xmlDoc.createElement("Theater");
+        xmlRootElement.appendChild(theaterElement);
         Element movieDateElement = xmlDoc.createElement("Date");
-        xmlRootElement.appendChild(movieDateElement);
+        theaterElement.appendChild(movieDateElement);
 //        movieDateElement.setAttribute("innerHTML", movieDate);
+        String theater = driver.findElement(By.xpath("//div//div//h1[@class='theatreName']")).getAttribute("innerHTML");
+        theaterElement.setTextContent(theater);
         movieDateElement.setTextContent(movieDate);
 
         for (WebElement movieElement : allMovies)
