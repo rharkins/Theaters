@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java" description="} else {" line="107" />
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java" description="} else {" line="119" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ceb2e9ce-f900-4b6d-b7ee-57e5968918a0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java" afterPath="$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java" afterPath="$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java" />
     </list>
     <ignored path="Theaters.iws" />
@@ -31,9 +31,11 @@
       <file leaf-file-name="Utils.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/Utils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="181">
+              <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -41,11 +43,31 @@
       <file leaf-file-name="CinemarkPage.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="358" column="43" selection-start-line="358" selection-start-column="43" selection-end-line="358" selection-end-column="43" />
+            <state relative-caret-position="134">
+              <caret line="60" column="132" selection-start-line="60" selection-start-column="105" selection-end-line="60" selection-end-column="132" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="File.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar!/jxl/read/biff/File.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="123" column="0" selection-start-line="123" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Workbook.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar!/jxl/Workbook.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+              <caret line="197" column="0" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -63,7 +85,7 @@
       <file leaf-file-name="SeleniumWebdriverBaseClass.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/SeleniumWebdriverBaseClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2075">
+            <state relative-caret-position="2024">
               <caret line="147" column="16" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="16" />
               <folding>
                 <marker date="1479317363218" expanded="false" signature="823:839" ph="&lt;~&gt;" />
@@ -75,8 +97,8 @@
       <file leaf-file-name="CarmikePage.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="51" column="31" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="31" />
+            <state relative-caret-position="107">
+              <caret line="51" column="48" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -133,96 +155,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SuiteRunner.java" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/testng/testng/6.9.10/testng-6.9.10-sources.jar!/org/testng/SuiteRunner.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3808">
-              <caret line="272" column="0" selection-start-line="272" selection-start-column="0" selection-end-line="272" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#6060#6061#0" expanded="false" />
-                <element signature="e#6118#6119#0" expanded="false" />
-                <element signature="e#6897#6898#0" expanded="false" />
-                <element signature="e#6921#6922#0" expanded="false" />
-                <element signature="e#6962#6963#0" expanded="false" />
-                <element signature="e#6996#6997#0" expanded="false" />
-                <element signature="e#7064#7065#0" expanded="false" />
-                <element signature="e#7105#7106#0" expanded="false" />
-                <element signature="e#7162#7163#0" expanded="false" />
-                <element signature="e#7209#7210#0" expanded="false" />
-                <element signature="e#8256#8257#0" expanded="false" />
-                <element signature="e#8305#8306#0" expanded="false" />
-                <element signature="e#8342#8343#0" expanded="false" />
-                <element signature="e#8384#8385#0" expanded="false" />
-                <element signature="e#8431#8432#0" expanded="false" />
-                <element signature="e#8471#8472#0" expanded="false" />
-                <element signature="e#8512#8513#0" expanded="false" />
-                <element signature="e#8545#8546#0" expanded="false" />
-                <element signature="e#8599#8600#0" expanded="false" />
-                <element signature="e#8636#8637#0" expanded="false" />
-                <element signature="e#11077#11078#0" expanded="false" />
-                <element signature="e#11112#11113#0" expanded="false" />
-                <element signature="e#11180#11181#0" expanded="false" />
-                <element signature="e#11240#11241#0" expanded="false" />
-                <element signature="e#11283#11284#0" expanded="false" />
-                <element signature="e#11311#11312#0" expanded="false" />
-                <element signature="e#12442#12443#0" expanded="false" />
-                <element signature="e#12477#12478#0" expanded="false" />
-                <element signature="e#12884#12885#0" expanded="false" />
-                <element signature="e#12940#12941#0" expanded="false" />
-                <element signature="e#13617#13618#0" expanded="false" />
-                <element signature="e#13678#13679#0" expanded="false" />
-                <element signature="e#13741#13742#0" expanded="false" />
-                <element signature="e#13772#13773#0" expanded="false" />
-                <element signature="e#13945#13946#0" expanded="false" />
-                <element signature="e#13997#13998#0" expanded="false" />
-                <element signature="e#14861#14862#0" expanded="false" />
-                <element signature="e#14927#14928#0" expanded="false" />
-                <element signature="e#15059#15060#0" expanded="false" />
-                <element signature="e#15125#15126#0" expanded="false" />
-                <element signature="e#16040#16041#0" expanded="false" />
-                <element signature="e#16094#16095#0" expanded="false" />
-                <element signature="e#16132#16133#0" expanded="false" />
-                <element signature="e#16182#16183#0" expanded="false" />
-                <element signature="e#19202#19203#0" expanded="false" />
-                <element signature="e#19225#19226#0" expanded="false" />
-                <element signature="e#19266#19267#0" expanded="false" />
-                <element signature="e#19289#19290#0" expanded="false" />
-                <element signature="e#19459#19460#0" expanded="false" />
-                <element signature="e#19488#19489#0" expanded="false" />
-                <element signature="e#19805#19806#0" expanded="false" />
-                <element signature="e#19853#19854#0" expanded="false" />
-                <element signature="e#19922#19923#0" expanded="false" />
-                <element signature="e#19970#19971#0" expanded="false" />
-                <element signature="e#20026#20027#0" expanded="false" />
-                <element signature="e#20075#20076#0" expanded="false" />
-                <element signature="e#20135#20136#0" expanded="false" />
-                <element signature="e#20186#20187#0" expanded="false" />
-                <element signature="e#20686#20687#0" expanded="false" />
-                <element signature="e#20719#20720#0" expanded="false" />
-                <element signature="e#20779#20780#0" expanded="false" />
-                <element signature="e#20812#20813#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SuiteRunnerWorker.java" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/testng/testng/6.9.10/testng-6.9.10-sources.jar!/org/testng/SuiteRunnerWorker.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="935">
-              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#2713#2714#0" expanded="false" />
-                <element signature="e#2778#2779#0" expanded="false" />
-                <element signature="e#3408#3409#0" expanded="false" />
-                <element signature="e#3479#3480#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -249,8 +181,8 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/stgconsulting/Utils.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/stgconsulting/SeleniumWebdriverBaseClass.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java" />
       </list>
     </option>
   </component>
@@ -785,44 +717,44 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.16 at 20h 45m 07s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 01h 19m 17s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.16 at 20h 49m 53s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 01h 25m 56s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.16 at 21h 02m 35s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 01h 32m 46s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 20h 56m 26s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 01h 56m 37s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 21h 01m 26s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 10h 31m 53s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 22h 12m 49s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 10h 37m 57s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 22h 21m 34s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 10h 39m 19s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 22h 43m 37s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 10h 47m 54s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 22h 51m 34s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 10h 53m 40s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
-    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.17 at 22h 53m 33s.xml">
+    <history-entry file="Utils_Test_Launcher_(4) - 2016.11.19 at 11h 11m 13s.xml">
       <configuration name="Utils.Test_Launcher (4)" configurationId="TestNG" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30884558" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30584708" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39906833" sideWeight="0.50323623" order="10" side_tool="true" content_ui="tabs" />
@@ -894,13 +826,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java</url>
-          <line>379</line>
+          <line>453</line>
           <properties />
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java</url>
-          <line>365</line>
+          <line>439</line>
           <properties />
           <option name="timeStamp" value="38" />
         </line-breakpoint>
@@ -923,24 +855,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/SeleniumWebdriverBaseClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="27" column="105" selection-start-line="27" selection-start-column="38" selection-end-line="27" selection-end-column="105" />
-          <folding>
-            <marker date="1479317363218" expanded="false" signature="823:839" ph="&lt;~&gt;" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -991,7 +905,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1045,7 +961,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1099,7 +1017,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1153,7 +1073,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="19" column="22" selection-start-line="19" selection-start-column="22" selection-end-line="19" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1207,7 +1129,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="19" column="22" selection-start-line="19" selection-start-column="22" selection-end-line="19" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1416,14 +1340,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar!/jxl/write/WritableWorkbook.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1921">
@@ -1437,7 +1353,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/SeleniumWebdriverBaseClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2075">
+        <state relative-caret-position="2024">
           <caret line="147" column="16" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="16" />
           <folding>
             <marker date="1479317363218" expanded="false" signature="823:839" ph="&lt;~&gt;" />
@@ -1445,18 +1361,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar!/jxl/read/biff/File.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="123" column="0" selection-start-line="123" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar!/jxl/Workbook.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="197" column="0" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CarmikePage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="51" column="31" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="31" />
+        <state relative-caret-position="107">
+          <caret line="51" column="48" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="48" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/stgconsulting/CinemarkPage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="358" column="43" selection-start-line="358" selection-start-column="43" selection-end-line="358" selection-end-column="43" />
+        <state relative-caret-position="134">
+          <caret line="60" column="132" selection-start-line="60" selection-start-column="105" selection-end-line="60" selection-end-column="132" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

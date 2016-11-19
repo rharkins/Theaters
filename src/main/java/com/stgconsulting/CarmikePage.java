@@ -4,6 +4,8 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import org.json.CDL;
@@ -47,9 +49,18 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
     private File workbookFileInput = new File("C:\\test\\Carmike_Theaters_Input.xls");
     private File workbookFileOutput = new File("C:\\test\\Carmike_Theaters_Output.xls");
     private Workbook theatersExcelWorkbook = Workbook.getWorkbook(workbookFileInput);
-    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbook);
+    private Workbook theatersExcelWorkbookOutput = Workbook.getWorkbook(workbookFileOutput);
+    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbookOutput);
     private boolean appendXMLRootElement = false;
     private boolean firstSearch = true;
+    int outputRowNumber = 1;
+    int numberOfRows = 0;
+    private WritableSheet mySheet = theatersWritableExcelWorkbook.getSheet(1);
+    private Label myTheaterCellLabel;
+    private Label myDateCellLabel;
+    private Label myMovieNameCellLabel;
+    private Label myInfoAndShowtimesCellLabel;
+    private Label myImagePathCellLabel;
 
     public CarmikePage() throws IOException, BiffException, ParserConfigurationException {
     }
@@ -111,7 +122,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         }
     }
 
-    public void getAllMovies() throws InterruptedException, IOException, TransformerException {
+    public void getAllMovies() throws InterruptedException, IOException, TransformerException, WriteException {
         List<WebElement> allMovies = driver.findElements(By.xpath("//li[contains(@class,'gridCol-s-12 gridCol-m-6 gridCol-l-6 filmItem active')]//div[@class='filmItemContent']"));
         List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))]"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]"));
@@ -132,9 +143,14 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
         }
 
         // Movie Date element
+        Element theaterElement = xmlDoc.createElement("Theater");
+        xmlRootElement.appendChild(theaterElement);
+
         Element movieDateElement = xmlDoc.createElement("Date");
-        xmlRootElement.appendChild(movieDateElement);
+        theaterElement.appendChild(movieDateElement);
 //        movieDateElement.setAttribute("innerHTML", movieDate);
+        String theater = driver.findElement(By.xpath("//span[@class='showtimesTitleCinema']")).getAttribute("innerHTML");
+        theaterElement.setTextContent(theater);
         movieDateElement.setTextContent(movieDate);
 
         for (WebElement movieElement : allMovies)
@@ -179,6 +195,36 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             imagePathElement.setTextContent(movieImagePath);
 
 //            Thread.sleep(5000);
+//            numberOfRows = mySheet.getRows();
+//            fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+            myTheaterCellLabel = new Label(0, outputRowNumber, "");
+            mySheet.addCell(myTheaterCellLabel);
+//        Cell myTheaterCell = mySheet.getWritableCell(0, outputRowNumber);
+            myTheaterCellLabel.setString(theater);
+
+            myDateCellLabel = new Label(1, outputRowNumber, "");
+            mySheet.addCell(myDateCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myDateCellLabel.setString(movieDate);
+
+            myMovieNameCellLabel = new Label(2, outputRowNumber, "");
+            mySheet.addCell(myMovieNameCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myMovieNameCellLabel.setString(movieName);
+
+            myInfoAndShowtimesCellLabel = new Label(3, outputRowNumber, "");
+            mySheet.addCell(myInfoAndShowtimesCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myInfoAndShowtimesCellLabel.setString(movieInfoAndShowtimes);
+
+            myImagePathCellLabel = new Label(4, outputRowNumber, "");
+            mySheet.addCell(myImagePathCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myImagePathCellLabel.setString(movieImagePath);
+//            numberOfRows = mySheet.getRows();
+//            fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+            outputRowNumber++;
+
         }
 
 //        // write the content into xml file
@@ -199,9 +245,9 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 
     }
 
-    public void getAllAvailableDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
+    public void getAllAvailableDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException, WriteException {
         List<WebElement> movies = null;
-        List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))]"));
+        List<WebElement> dayButtons = driver.findElements(By.xpath("//div[@class='dateList']//label[not(contains(@class,'dateListItem disabled'))]"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]"));
         WebElement moviesImageURL = null;
         String movieDate = driver.findElement(By.xpath("//div[@class='dateList']//label[not(contains(@class,'disabled'))][1]//span[1]")).getAttribute("innerHTML");
@@ -218,7 +264,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
 //        xmlDoc.appendChild(xmlRootElement);
 
         for (int index = 1; index < 5; index++) {
-            if (dayButtons.get(index).isEnabled())
+            if (dayButtons.get(index).isDisplayed())
             {
             dayButtons.get(index).click();
             Thread.sleep(5000);
@@ -230,6 +276,7 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
             // Movie Date element
             Element movieDateElement = xmlDoc.createElement("Date");
             xmlRootElement.appendChild(movieDateElement);
+            String theater = driver.findElement(By.xpath("//span[@class='showtimesTitleCinema']")).getAttribute("innerHTML");
 //            movieDateElement.setAttribute("innerHTML", movieDate);
             movieDateElement.setTextContent(movieDate);
 
@@ -270,6 +317,36 @@ public class CarmikePage extends SeleniumWebdriverBaseClass{
                 movieNameElement.appendChild(imagePathElement);
 //                imagePathElement.setAttribute("innerHTML", movieImagePath);
                 imagePathElement.setTextContent(movieImagePath);
+
+//                numberOfRows = mySheet.getRows();
+//                fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+                myTheaterCellLabel = new Label(0, outputRowNumber, "");
+                mySheet.addCell(myTheaterCellLabel);
+//        Cell myTheaterCell = mySheet.getWritableCell(0, outputRowNumber);
+                myTheaterCellLabel.setString(theater);
+
+                myDateCellLabel = new Label(1, outputRowNumber, "");
+                mySheet.addCell(myDateCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myDateCellLabel.setString(movieDate);
+
+                myMovieNameCellLabel = new Label(2, outputRowNumber, "");
+                mySheet.addCell(myMovieNameCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myMovieNameCellLabel.setString(movieName);
+
+                myInfoAndShowtimesCellLabel = new Label(3, outputRowNumber, "");
+                mySheet.addCell(myInfoAndShowtimesCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myInfoAndShowtimesCellLabel.setString(movieInfoAndShowtimes);
+
+                myImagePathCellLabel = new Label(4, outputRowNumber, "");
+                mySheet.addCell(myImagePathCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myImagePathCellLabel.setString(movieImagePath);
+//                numberOfRows = mySheet.getRows();
+//                fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+                outputRowNumber++;
 
             }
         }

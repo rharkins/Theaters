@@ -4,6 +4,8 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import org.json.JSONException;
@@ -55,8 +57,18 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
     private File workbookFileInput = new File("C:\\test\\Cinemark_Theaters_Input.xls");
     private File workbookFileOutput = new File("C:\\test\\Cinemark_Theaters_Output.xls");
     private Workbook theatersExcelWorkbook = Workbook.getWorkbook(workbookFileInput);
-    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbook);
+    private Workbook theatersExcelWorkbookOutput = Workbook.getWorkbook(workbookFileOutput);
+    private WritableWorkbook theatersWritableExcelWorkbook = Workbook.createWorkbook(workbookFileOutput, theatersExcelWorkbookOutput);
     private boolean appendXMLRootElement = false;
+    int outputRowNumber = 1;
+    int numberOfRows = 0;
+    private WritableSheet mySheet = theatersWritableExcelWorkbook.getSheet(1);
+    private Label myTheaterCellLabel;
+    private Label myDateCellLabel;
+    private Label myMovieNameCellLabel;
+    private Label myInfoAndShowtimesCellLabel;
+    private Label myImagePathCellLabel;
+
     //WebDriver driver = new FirefoxDriver();
     //driver.navigate().to("http://www.google.com");
 
@@ -177,7 +189,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         }
     }
 
-    public void getAllMovies() throws InterruptedException, IOException, TransformerException {
+    public void getAllMovies() throws InterruptedException, IOException, TransformerException, WriteException {
         List<WebElement> allMovies = driver.findElements(By.xpath("//div[@class='col-xs-12 col-sm-10']"));
         List<WebElement> dayButtons = driver.findElements(By.xpath("//li[@data-datevalue]"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath(".//li//a[@id=0]/.."));
@@ -200,6 +212,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         // Movie Date element
         Element theaterElement = xmlDoc.createElement("Theater");
         xmlRootElement.appendChild(theaterElement);
+
         Element movieDateElement = xmlDoc.createElement("Date");
         theaterElement.appendChild(movieDateElement);
 //        movieDateElement.setAttribute("innerHTML", movieDate);
@@ -248,6 +261,36 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             imagePathElement.setTextContent(movieImagePath);
 
 //            Thread.sleep(5000);
+//            numberOfRows = mySheet.getRows();
+//            fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+            myTheaterCellLabel = new Label(0, outputRowNumber, "");
+            mySheet.addCell(myTheaterCellLabel);
+//        Cell myTheaterCell = mySheet.getWritableCell(0, outputRowNumber);
+            myTheaterCellLabel.setString(theater);
+
+            myDateCellLabel = new Label(1, outputRowNumber, "");
+            mySheet.addCell(myDateCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myDateCellLabel.setString(movieDate);
+
+            myMovieNameCellLabel = new Label(2, outputRowNumber, "");
+            mySheet.addCell(myMovieNameCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myMovieNameCellLabel.setString(movieName);
+
+            myInfoAndShowtimesCellLabel = new Label(3, outputRowNumber, "");
+            mySheet.addCell(myInfoAndShowtimesCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myInfoAndShowtimesCellLabel.setString(movieInfoAndShowtimes);
+
+            myImagePathCellLabel = new Label(4, outputRowNumber, "");
+            mySheet.addCell(myImagePathCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+            myImagePathCellLabel.setString(movieImagePath);
+//            numberOfRows = mySheet.getRows();
+//            fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+            outputRowNumber++;
+
         }
 
 //        // write the content into xml file
@@ -268,7 +311,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
 
     }
 
-    public void getNextSevenDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException {
+    public void getNextSevenDaysMovies() throws InterruptedException, IOException, TransformerException, JSONException, WriteException {
         List<WebElement> movies = null;
         List<WebElement> dayButtons = driver.findElements(By.xpath("//ul[@id='showdatesMore']//li[@role='presentation']"));
         WebElement currentDateAnchorElement = driver.findElement(By.xpath(".//li//a[@id=0]/.."));
@@ -298,6 +341,7 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
             // Movie Date element
             Element movieDateElement = xmlDoc.createElement("Date");
             xmlRootElement.appendChild(movieDateElement);
+            String theater = driver.findElement(By.xpath("//div//div//h1[@class='theatreName']")).getAttribute("innerHTML");
 //            movieDateElement.setAttribute("innerHTML", movieDate);
             movieDateElement.setTextContent(movieDate);
 
@@ -336,6 +380,36 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
                 movieNameElement.appendChild(imagePathElement);
 //                imagePathElement.setAttribute("innerHTML", movieImagePath);
                 imagePathElement.setTextContent(movieImagePath);
+
+//                numberOfRows = mySheet.getRows();
+//                fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+                myTheaterCellLabel = new Label(0, outputRowNumber, "");
+                mySheet.addCell(myTheaterCellLabel);
+//        Cell myTheaterCell = mySheet.getWritableCell(0, outputRowNumber);
+                myTheaterCellLabel.setString(theater);
+
+                myDateCellLabel = new Label(1, outputRowNumber, "");
+                mySheet.addCell(myDateCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myDateCellLabel.setString(movieDate);
+
+                myMovieNameCellLabel = new Label(2, outputRowNumber, "");
+                mySheet.addCell(myMovieNameCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myMovieNameCellLabel.setString(movieName);
+
+                myInfoAndShowtimesCellLabel = new Label(3, outputRowNumber, "");
+                mySheet.addCell(myInfoAndShowtimesCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myInfoAndShowtimesCellLabel.setString(movieInfoAndShowtimes);
+
+                myImagePathCellLabel = new Label(4, outputRowNumber, "");
+                mySheet.addCell(myImagePathCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, outputRowNumber);
+                myImagePathCellLabel.setString(movieImagePath);
+//                numberOfRows = mySheet.getRows();
+//                fileAndConsoleOutput(cinemark_theaters_bw, String.valueOf(numberOfRows));
+                outputRowNumber++;
 
             }
         }
@@ -566,9 +640,13 @@ public class CinemarkPage extends SeleniumWebdriverBaseClass {
         int numSheets = theatersWritableExcelWorkbook.getNumberOfSheets();
         fileAndConsoleOutput(cinemark_theaters_bw, "Number of sheets = " + numSheets);
 //        Sheet mySheet = myExcelWorkbook.getSheet(0);
-        Sheet mySheet = theatersWritableExcelWorkbook.getSheet(0);
-        Cell myCell = mySheet.getCell(0, 0);
-        String myContents = myCell.getContents();
+//        WritableSheet mySheet = theatersWritableExcelWorkbook.getSheet(1);
+//        Label myCellLabel;
+//        myCellLabel = new Label(0, 1, "");
+//        mySheet.addCell(myCellLabel);
+//        Cell myCell = mySheet.getWritableCell(0, 1);
+//        myCellLabel.setString("Kim Test");
+//        String myContents = myCell.getContents();
 //        System.out.print(myContents);
         theatersWritableExcelWorkbook.write();
         theatersWritableExcelWorkbook.close();
